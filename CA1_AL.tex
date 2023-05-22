@@ -1,0 +1,199 @@
+\documentclass{article}
+\usepackage{blindtext}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{amsmath}	
+\usepackage{xcolor}
+
+\title{Computing Assignment}
+\author{Hyun Soo Lee}
+\begin{document}
+\maketitle
+
+\lstset{language=Matlab}
+The following are the equations of interest:
+$$u_t + u\cdot\nabla u = -\nabla p$$
+$$\nabla \cdot u = 0$$
+$$u \cdot n = 0$$
+\section*{Task1}
+On the domain $\Omega_1 = [0, 1] \times [0, 1]$, we examine the solutions:
+$$u_1(x, y) = 1 - 2\cos(2\pi x)\sin(2\pi y)$$
+$$u_2(x, y) = 1 + 2\sin(2\pi y)\cos(2\pi y)$$
+$$p_1(x, y) = -\cos(4\pi x) - \cos(4\pi y)$$
+The m-file Problem1.m solves the Poisson problem with initial condition
+$$\vec{U}_0 = (u^e_{i, j}, v^e_{i, j}) + (u'_{i, j}, v'_{i, j})$$
+where $(u'_{i, j}, v'_{i, j})$ is a random perturbation. Once I obtain the solution of the Poisson
+problem, $\phi$, I update my velocity field.
+$$\vec{U}^* = \vec{U}_0 - \nabla \phi$$
+Finally, I compute my error by comparing the updated velocity with the velocity field of the 
+steady solution.
+
+\section*{Task 2}
+For the the following task, I need to show
+$$u_1(x, y) = 1 - 2\cos(2\pi x)\sin(2\pi y)$$
+$$u_2(x, y) = 1 + 2\sin(2\pi y)\cos(2\pi y)$$
+$$p_1(x, y) = -\cos(4\pi x) - \cos(4\pi y)$$
+are the solution of incompressible Euler Equation.\newline
+Using Einstein notation we see that 
+$$\vec{u}\cdot\nabla\vec{u} = u_i\frac{\partial u_j}{\partial x_i}$$
+
+Thus, componentwise,
+$$\vec{u}\cdot\nabla\vec{u} = (u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial y}, u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y})^T$$
+Instead of working with the steady equations, work with the actual solutions and plug in $t = 0$ at the end of the calculation.
+$$u(x, y, t) = 1 - 2\cos(2\pi(x-t))\sin(2\pi(y-t))$$
+$$v(x, y, t) = 1 + 2\sin(2\pi(x-t))\cos(2\pi(y-t))$$
+$$p(x, y, t) = -\cos(4\pi(x-t)) - \cos(4\pi(y-t))$$
+
+Note that
+$$u_t = -4\pi\sin(2\pi(x-t))\sin(2\pi(y-t)) + 4\pi\cos(2\pi(x-t))\cos(2\pi(y-t))$$
+$$u_x = 4\pi\sin(2\pi(x-t))\sin(2\pi(y-t))$$
+$$u_y = -4\pi\cos(2\pi(x-t))\cos(2\pi(y-t))$$
+
+Similarly,
+$$v_t = -4\pi\cos(2\pi(x-t))\cos(2\pi(y-t)) + 4\pi\sin(2\pi(x-t))\sin(2\pi(y-t))$$
+$$v_x = 4\pi\cos(2\pi(x-t))\cos(2\pi(y-t))$$
+$$v_y = -4\pi\sin(2\pi(x-t))\sin(2\pi(y-t))$$
+Then, 
+$$u_t + u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial y} = -8\pi\sin(2pi(x-t))\cos(2pi(x - t))$$
+
+$$v_t + u\frac{\partial v}{\partial x} + v\frac{\partial v}{\partial y} = -8\pi\sin(2pi(y-t))\cos(2pi(y - t))$$
+Finally, 
+$$\nabla p(x, y, t) = (\frac{\partial p}{\partial x}, \frac{\partial p}{\partial y})^T$$
+
+$$\frac{\partial p}{\partial x} = 4\pi\sin(4\pi(x-t))$$
+$$\frac{\partial p}{\partial y} = 4\pi\sin(4\pi(y-t))$$
+By applying $\sin(2\theta) = 2sin(\theta)cos(\theta)$, 
+$$-8\pi\sin(2pi(x-t))\cos(2pi(x - t)) = -4\pi\sin(4\pi(x-t))$$
+$$-8\pi\sin(2pi(y-t))\cos(2pi(y - t)) = -4\pi\sin(4\pi(y-t))$$
+Therefore, the Euler equation is satisfied. By plugging in t = 0,
+$$u_1(x, y) = 1 - 2\cos(2\pi x)\sin(2\pi y)$$
+$$u_2(x, y) = 1 + 2\sin(2\pi y)\cos(2\pi y)$$
+$$p_1(x, y) = -\cos(4\pi x) - \cos(4\pi y)$$
+satisfies the Euler Equation. 
+Now, incompressiblity of the steady solution will be shown. 
+$$\frac{\partial u_1}{\partial x} = 4\pi\sin(2\pi x)\sin(2\pi y)$$
+$$\frac{\partial u_2}{\partial y} = -4\pi\sin(2\pi x)\sin(2\pi y)$$
+Thus, $$\frac{\partial u_1}{\partial x} + \frac{\partial u_2}{\partial y} = 0$$
+
+
+\section*{Task 3}
+We need to check that $\Gamma$ equals the integral of the vorticity $w(x, y)$ given on page 174.
+$$w(x, y) = 2\pi(e^{-2(x^2 + (y-1)^2)} + e^{-2(x^2 + (y+1)^2)} )$$
+Apply the integral to each component at a time.
+$$\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}e^{-2(x^2 + (y-1)^2)}dydx = \int_{-\infty}^{\infty} e^{-2(y-1)^2}dy\int_{-\infty}^{\infty} e^{-2x^2}dx$$
+Each term can be computed by applying a u-sub.
+$$\int_{-\infty}^{\infty} e^{-2x^2}dx = \frac{1}{\sqrt{2}} \int_{-\infty}^{\infty}e^{-u^2}du = \sqrt{\frac{\pi}{2}}$$
+$$\int_{-\infty}^{\infty} e^{-2(y-1)^2}dy = \frac{1}{\sqrt{2}} \int_{-\infty}^{\infty}e^{-u^2}du = \sqrt{\frac{\pi}{2}}$$
+Therefore,
+$$\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}e^{-2(x^2 + (y-1)^2)}dydx = \frac{\pi}{2}$$
+Applying the same approach,
+$$\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}e^{-2(x^2 + (y+1)^2)}dydx = \frac{\pi}{2}$$
+Therefore,
+$$\Gamma = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} w(x, y)dydx = 2\pi^2$$
+\section*{Task 4}
+From my experiments, I noticed that my updated $\vec{u}$ loses its divergence free property
+as $c \rightarrow 0$ for all grid sizes. 
+Once I plugged in c = 0, my code did not work, as the divergence could not be computed.\newline
+The following is the result for $h = \frac{1}{10}$.
+\begin{center}
+    \begin{tabular}{||c c||} 
+     \hline
+     c value & $L^\infty$ of Divergence  \\ [0.5ex] 
+     \hline\hline
+     1 & 1.2945e-13 \\ 
+     \hline
+     0.1 & 2.7711e-13 \\
+     \hline
+     0.01 & 2.9354e-13 \\
+     \hline
+     $10^{-3}$ & 1.8741e-13 \\
+     \hline
+     $10^{-4}$ & 2.3848e-13 \\
+     \hline
+     $10^{-5}$ &  1.8252e-13 \\
+     \hline
+     $10^{-6}$ & 3.6504e-13  \\ [1ex] 
+     \hline
+    \end{tabular}
+    \end{center}
+
+\section*{Task 5}
+$$u \cdot n = 0, \;\;\; x \in \partial \Omega$$
+implies that there is no flow across the boundary.
+My updated $u^*$ satisfies
+$$u^* \cdot n = 0, \;\;\; x \in \partial \Omega$$
+\section*{Task 6}
+The following is a broad outline of the various details of the 
+numerical method that I have coded. 
+\newline
+(1) The center of $(i, j)^{th}$ cell is defined by
+$$(x_i, y_j) = (h(i-\frac{1}{2}), h(j-\frac{1}{2}))$$
+where
+$1 \leq i \leq Nx$ and $1 \leq j \leq Nx$. 
+\newline
+(2) The coordinates of the edges are defined as
+$$(x_i, y_j) = (ih, jh)$$
+where
+$0 \leq i \leq Nx$ and $0 \leq j \leq Nx$. 
+\newline
+(3) The discrete exact velocities
+$$(u_{i, j}^e, v_{i, j}^e)$$
+and the discrete initial velocities
+$$(u_{i, j}^*, v_{i, j}^*)$$
+exist on the cell edges.\newline
+On the other hand, the discrete divergence 
+$$D(U)_{i, j}$$ exists on the cell centers. 
+\newline
+Finally, the discrete gradient $G(\phi)_{i, j}$ 
+is defined on the cell edges. 
+\newline
+(4) The definition of the discrete divergence operator in terms
+of the discrete velocities is the following. 
+$$D(U)_{i,j} = \frac{u_{i,j}^* - u_{i-1,j}^*}{h} + \frac{v_{i,j}^* - v_{i-1,j}^*}{h}$$
+On the other hand, the discrete divergence is defined as
+$$G(\phi)_{i,j} = (\frac{\phi_{i+1,j} -\phi_{i,j}}{h}, \frac{\phi_{i,j+1} -\phi_{i,j}}{h})$$
+\newline
+(5) Rate of convergence for my Known Exact Solutions
+\begin{center}
+    \begin{tabular}{||c c c c c c||} 
+     \hline
+     N & $h = \frac{1}{N}$ & $L^2$ & $L^2$ growth rate& $L^\infty$&$L^\infty$ growth rate \\ [0.5ex] 
+     \hline\hline
+     4 & 0.25 & 1.5616 && 0.6036& \\ 
+     \hline
+     8 & 0.125 & 1.4535 &1.1918& 0.3560& 2.0458\\
+     \hline
+     16 & 0.0625 & 1.3570 &1.2250& 0.1851& 1.6332\\
+     \hline
+     32 & 0.0312 & 1.3256 &1.0831& 0.1112& 1.3021\\
+     \hline
+     64 & 0.0156 & 1.3103 &1.0430& 0.0589& 1.2893\\  
+     \hline
+     64 & 0.0156 & 1.2968 &1.0398& 0.0282&  1.2601\\ [1ex] 
+     \hline
+    \end{tabular}
+    \end{center}
+The table above examines the u-component of the vector field.
+
+
+\begin{center}
+    \begin{tabular}{||c c c c c c||} 
+     \hline
+     N & $h = \frac{1}{N}$ & $L^2$ & $L^2$ growth rate& $L^\infty$&$L^\infty$ growth rate \\ [0.5ex] 
+     \hline\hline
+     4 & 0.25 & 1.5452 &&  0.6036& \\ 
+     \hline
+     8 & 0.125 & 1.4332 &1.2091& 0.3560& 2.0458\\
+     \hline
+     16 & 0.0625 & 1.3424 &1.2223& 0.1851& 1.6332\\
+     \hline
+     32 & 0.0312 & 1.3223 &1.0540& 0.1076& 1.3216\\
+     \hline
+     64 & 0.0156 & 1.3034 &1.0543& 0.0524& 1.3227\\  
+     \hline
+     64 & 0.0156 & 1.2976 &1.0171& 0.0292&  1.1983\\ [1ex] 
+     \hline
+    \end{tabular}
+    \end{center}
+The table above examines the v-component of the vector field.
+\end{document}
